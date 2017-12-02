@@ -54,7 +54,7 @@ namespace ClimateMeter.Device.Net.DhtReader
 
         private DhtData? ReadSingleResult()
         {
-            Thread.Sleep(800); // a short delay to avoid issues with sensor called too often
+            Thread.Sleep(1000); // a short delay to avoid issues with sensor called too often
             int readResult = Dht11Wrapper.retry_read_dht11_data(300);
             
             if (readResult != 1)
