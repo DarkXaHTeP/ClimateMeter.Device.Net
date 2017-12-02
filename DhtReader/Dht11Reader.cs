@@ -26,8 +26,8 @@ namespace ClimateMeter.Device.Net.DhtReader
         public bool TryReadDhtData(out DhtData data)
         {
             List<DhtData> results = Enumerable
-                .Range(0, 5)
-                .Select(_ => ReadSingleResult())
+                .Range(0, 17)
+                .Select(_ => ReadSingleResult(0))
                 .Where(res => res.HasValue)
                 .Select(res => res.Value)
                 .ToList();
@@ -39,27 +39,42 @@ namespace ClimateMeter.Device.Net.DhtReader
                 return false;
             }
 
-            float temperature = results
-                .Select(res => res.Temperature)
-                .Average(res => res);
-            
-            float humidity = results
-                .Select(res => res.Humidity)
-                .Average(res => res);
+            IEnumerable<float> temperatures = results
+                .Select(res => res.Temperature);
+
+            float temperature = ProcessSensorReading(temperatures, 2.5f);
+
+            IEnumerable<float> humidities = results
+                .Select(res => res.Humidity);
+
+            float humidity = ProcessSensorReading(humidities, 2.5f);
 
             data = new DhtData(temperature, humidity);
             
             return true;
         }
 
-        private DhtData? ReadSingleResult()
+        private float ProcessSensorReading(IEnumerable<float> results, float maxDeviation)
+        {
+            var values = results
+                .GroupBy(res => res)
+                .OrderByDescending(res => res.Count())
+                .Select(res => res.Key)
+                .Take(2);
+            
+            Console.WriteLine($"Taking average from { String.Join(", ", values) }");
+
+            return values.Average();
+        }
+
+        private DhtData? ReadSingleResult(uint attempt)
         {
             Thread.Sleep(1000); // a short delay to avoid issues with sensor called too often
             int readResult = Dht11Wrapper.retry_read_dht11_data(300);
             
             if (readResult != 1)
             {
-                _log.LogWarning("Receiived bad result from Sensor");
+                _log.LogWarning("Received bad result from Sensor");
                 
                 return null;
             }
@@ -68,8 +83,15 @@ namespace ClimateMeter.Device.Net.DhtReader
                 Dht11Wrapper.get_temp(),
                 Dht11Wrapper.get_humidity()
             );
+
+            if (Math.Abs(data.Humidity - 20f) < 0.05f && Math.Abs(data.Temperature - 22f) < 0.05f && attempt < 5)
+            {
+                _log.LogWarning("Received 22 and 20, Skipping...");
+                
+                return ReadSingleResult(attempt + 1);
+            }
             
-            _log.LogInformation($"Read next values: temperature = {data.Temperature}, humidity = {data.Humidity}");
+            Console.WriteLine($"{data.Temperature}|--|{data.Humidity}");
 
             return data;
         }
