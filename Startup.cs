@@ -58,7 +58,8 @@ namespace ClimateMeter.Device.Net
             
             services.Configure<AuthenticationSettings>(_configuration.GetSection("Authentication"));
             services.AddSingleton<AuthenticationTokenProvider>();
-
+            
+            services.Configure<DeviceSettings>(_configuration);
         }
     }
 }
