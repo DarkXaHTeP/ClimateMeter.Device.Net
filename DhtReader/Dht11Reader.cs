@@ -42,29 +42,37 @@ namespace ClimateMeter.Device.Net.DhtReader
             IEnumerable<float> temperatures = results
                 .Select(res => res.Temperature);
 
-            float temperature = ProcessSensorReading(temperatures, 2.5f);
+            float temperature = ProcessSensorReading(temperatures);
 
             IEnumerable<float> humidities = results
                 .Select(res => res.Humidity);
 
-            float humidity = ProcessSensorReading(humidities, 2.5f);
+            float humidity = ProcessSensorReading(humidities);
 
             data = new DhtData(temperature, humidity);
             
             return true;
         }
 
-        private float ProcessSensorReading(IEnumerable<float> results, float maxDeviation)
+        private float ProcessSensorReading(IEnumerable<float> results)
         {
-            var values = results
+            var valueGroups = results
                 .GroupBy(res => res)
                 .OrderByDescending(res => res.Count())
-                .Select(res => res.Key)
-                .Take(2);
-            
-            Console.WriteLine($"Taking average from { String.Join(", ", values) }");
+                .Take(2)
+                .ToList();
 
-            return values.Average();
+            var count = valueGroups
+                .Select(group => group.Count())
+                .Sum();
+            
+            Console.WriteLine($"Taking average from { String.Join(", ", valueGroups.Select(gr => $"{gr.Key} (count - {gr.Count()})")) }");
+
+            var total = valueGroups
+                .Select(gr => gr.Key * gr.Count())
+                .Sum();
+            
+            return total / count;
         }
 
         private DhtData? ReadSingleResult(uint attempt)
