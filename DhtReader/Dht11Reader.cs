@@ -64,10 +64,14 @@ namespace ClimateMeter.Device.Net.DhtReader
                 return null;
             }
             
-            return new DhtData(
+            var data = new DhtData(
                 Dht11Wrapper.get_temp(),
                 Dht11Wrapper.get_humidity()
             );
+            
+            _log.LogInformation($"Read next values: temperature = {data.Temperature}, humidity = {data.Humidity}");
+
+            return data;
         }
     }
 }
