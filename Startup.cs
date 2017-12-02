@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading;
+using ClimateMeter.Device.Net.Authentication;
 using ClimateMeter.Device.Net.DhtReader;
 using DarkXaHTeP.CommandLine;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -9,6 +11,13 @@ namespace ClimateMeter.Device.Net
 {
     public class Startup
     {   
+        private readonly IConfiguration _configuration;
+
+        public Startup(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+        
         public void Configure(IApplicationBuilder app, IDhtReader dhtReader, ILogger<Startup> log)
         {
             app.OnExecute(() =>
@@ -44,8 +53,12 @@ namespace ClimateMeter.Device.Net
             }
             else
             {
-                services.AddSingleton<IDhtReader, DhtReader.DhtReader>();
+                services.AddSingleton<IDhtReader, Dht11Reader>();
             }
+            
+            services.Configure<AuthenticationSettings>(_configuration.GetSection("Authentication"));
+            services.AddSingleton<AuthenticationTokenProvider>();
+
         }
     }
 }
