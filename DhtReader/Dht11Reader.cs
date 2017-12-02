@@ -92,9 +92,9 @@ namespace ClimateMeter.Device.Net.DhtReader
                 Dht11Wrapper.get_humidity()
             );
 
-            if (Math.Abs(data.Humidity - 20f) < 0.05f && Math.Abs(data.Temperature - 22f) < 0.05f && attempt < 5)
+            if (Math.Abs(data.Humidity - 20f) < 0.05f && Math.Abs(data.Temperature - 22f) < 0.05f && attempt < 7)
             {
-                _log.LogWarning("Received 22 and 20, Skipping...");
+                Console.WriteLine("!! Received 22 and 20, Skipping...");
                 
                 return ReadSingleResult(attempt + 1);
             }
