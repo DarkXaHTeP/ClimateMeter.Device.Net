@@ -1,5 +1,6 @@
 ﻿using DarkXaHTeP.CommandLine;
 using DarkXaHTeP.Extensions.Configuration.Consul;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace ClimateMeter.Device.Net
@@ -11,7 +12,9 @@ namespace ClimateMeter.Device.Net
             ICommandLineHost host = new CommandLineHostBuilder()
                 .ConfigureAppConfiguration(config =>
                 {
-                    config.AddConsul("ClimateMeter.Device");
+                    config
+                        .AddConsul("ClimateMeter.Device")
+                        .AddEnvironmentVariables("DEVICE_");
                 })
                 .ConfigureLogging(logging =>
                 {
