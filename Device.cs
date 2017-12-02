@@ -43,7 +43,7 @@ namespace ClimateMeter.Device.Net
                     _log.LogError("Received bad result from DHT11 Sensor");
                 }
 
-                await Task.Delay(10* 60 * 1000); // read every 10 minutes
+                await Task.Delay(60 * 1000); // read every minute
             }
         }
     }
