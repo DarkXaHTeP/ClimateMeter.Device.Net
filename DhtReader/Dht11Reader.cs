@@ -44,7 +44,7 @@ namespace ClimateMeter.Device.Net.DhtReader
                 .Average(res => res);
             
             float humidity = results
-                .Select(res => res.Temperature)
+                .Select(res => res.Humidity)
                 .Average(res => res);
 
             data = new DhtData(temperature, humidity);
