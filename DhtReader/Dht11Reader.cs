@@ -72,7 +72,7 @@ namespace ClimateMeter.Device.Net.DhtReader
                 .Select(gr => gr.Key * gr.Count())
                 .Sum();
             
-            return total / count;
+            return (float) Math.Round(total / count * 100) / 100f;
         }
 
         private DhtData? ReadSingleResult(uint attempt)
@@ -92,9 +92,9 @@ namespace ClimateMeter.Device.Net.DhtReader
                 Dht11Wrapper.get_humidity()
             );
 
-            if (Math.Abs(data.Humidity - 20f) < 0.05f && Math.Abs(data.Temperature - 22f) < 0.05f && attempt < 7)
+            if (Math.Abs(data.Humidity - 20f) < 0.05f && (Math.Abs(data.Temperature - 22f) < 0.05f || Math.Abs(data.Temperature - 21f) < 0.05f) && attempt < 10)
             {
-                Console.WriteLine("!! Received 22 and 20, Skipping...");
+                Console.WriteLine($"!! Received {data.Temperature} and {data.Humidity}, Skipping...");
                 
                 return ReadSingleResult(attempt + 1);
             }
