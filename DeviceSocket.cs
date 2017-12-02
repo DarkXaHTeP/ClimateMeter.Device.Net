@@ -13,7 +13,7 @@ namespace ClimateMeter.Device.Net
             _tokenProvider = tokenProvider;
         }
         
-        public Task<Guid> Connect(string deviceName, string deviceDescription)
+        public Task<Guid> Connect(string settingsServerBaseUrl, string deviceName, string deviceDescription)
         {
             return Task.FromResult(Guid.Empty);
         }

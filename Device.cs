@@ -26,7 +26,7 @@ namespace ClimateMeter.Device.Net
             _log.LogInformation($"Starting device {_settings.DeviceName} on pin {_settings.PinNumber}");
             
             _dhtReader.Initialize(_settings.PinNumber);
-            Guid deviceId = await _socket.Connect(_settings.DeviceName, _settings.DeviceDescription);
+            Guid deviceId = await _socket.Connect(_settings.ServerBaseUrl, _settings.DeviceName, _settings.DeviceDescription);
             
             _log.LogInformation($"Obtained device id: {deviceId}");
 
