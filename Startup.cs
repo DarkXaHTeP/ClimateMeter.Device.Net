@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using ClimateMeter.Device.Net.Authentication;
 using ClimateMeter.Device.Net.DhtReader;
 using DarkXaHTeP.CommandLine;
@@ -27,7 +28,10 @@ namespace ClimateMeter.Device.Net
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddNodeServices();
+            services.AddNodeServices(options =>
+            {
+                options.ProjectPath = Directory.GetCurrentDirectory();
+            });
             
             // TODO Replace with ICommandLineEnvironment after issue is fixed
             if (Environment.GetEnvironmentVariable("COMMANDLINE_ENVIRONMENT") == "Development")
