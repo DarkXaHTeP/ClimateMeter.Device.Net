@@ -3,7 +3,7 @@ var sensor = require('node-dht-sensor');
 function readData(callback, pinNumber, retryNumber) {
     sensor.read(11, 4, function(err, temp, hum) {
         if (!err) {
-             callback({
+             callback(null, {
                  Temperature: temp.toFixed(1),
                  Humidity: hum.toFixed(1)
              });
