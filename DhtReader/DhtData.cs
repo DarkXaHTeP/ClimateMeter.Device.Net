@@ -7,7 +7,7 @@
             Temperature = temperature;
             Humidity = humidity;
         }
-        public float Temperature { get; }
-        public float Humidity { get; }
+        public float Temperature { get; set; }
+        public float Humidity { get; set; }
     }
 }
