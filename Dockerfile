@@ -5,15 +5,14 @@ COPY . ./
 RUN dotnet restore
 RUN dotnet publish -c Release -r linux-arm -o out
 
-FROM darkxahtep/dht:latest-jessie as dht-env
-
-FROM darkxahtep/dotnet:2.0-runtime-deps-jessie-arm32v7
+FROM microsoft/dotnet:2.0-runtime-deps-stretch-arm32v7
 WORKDIR /app
 
-COPY --from=dht-env /usr/lib/libdht11.so /usr/lib/libdht11.so
+RUN mkdir bcm2835 && cd bcm2835 \
+    && curl http://www.airspayce.com/mikem/bcm2835/bcm2835-1.52.tar.gz -o bcm2835.tar.gz \
+    && tar zxvf bcm2835.tar.gz -C ./ --strip-components=1 \
+    && ./configure && make && make check && make install
 
 COPY --from=build-env /app/out ./
-ENV ASPNETCORE_URLS http://0.0.0.0:5000
-EXPOSE 5000
 
 ENTRYPOINT ["./ClimateMeter.Device.Net"]
