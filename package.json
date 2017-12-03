@@ -1,0 +1,7 @@
+{
+    "name": "climatemeter-device-net",
+    "private": true,
+    "dependencies": {
+        "node-dht-sensor": "0.0.33"
+    }
+}
