@@ -15,6 +15,7 @@ RUN mkdir bcm2835 && cd bcm2835 \
     && tar zxvf bcm2835.tar.gz -C ./ --strip-components=1 \
     && ./configure && make && make install
 
+RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash && nvm install v8.9.1 && npm install
 COPY --from=build-env /app/out ./
 
 ENTRYPOINT ["./ClimateMeter.Device.Net"]
