@@ -2,25 +2,26 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Microsoft.AspNetCore.NodeServices;
 using Microsoft.Extensions.Logging;
 
 namespace ClimateMeter.Device.Net.DhtReader
 {
     public class Dht11Reader: IDhtReader
     {
+        private readonly INodeServices _nodeServices;
         private readonly ILogger<Dht11Reader> _log;
+        private int _pin;
 
-        public Dht11Reader(ILogger<Dht11Reader> log)
+        public Dht11Reader(INodeServices nodeServices, ILogger<Dht11Reader> log)
         {
+            _nodeServices = nodeServices;
             _log = log;
         }
         
         public void Initialize(int pin)
         {
-            if (Dht11Wrapper.init_dht11(pin) != 1)
-            {
-                throw new Exception("Unable to initialize DHT11 sensor");
-            }
+            _pin = pin;
         }
 
         public bool TryReadDhtData(out DhtData data)
@@ -72,36 +73,26 @@ namespace ClimateMeter.Device.Net.DhtReader
                 .Select(gr => gr.Key * gr.Count())
                 .Sum();
             
-            return (float) Math.Round(total / count * 100) / 100f;
+            return (float) Math.Round(total / count * 10) / 10f;
         }
 
         private DhtData? ReadSingleResult(uint attempt)
         {
-            Thread.Sleep(1000); // a short delay to avoid issues with sensor called too often
-            int readResult = Dht11Wrapper.retry_read_dht11_data(300);
-            
-            if (readResult != 1)
+            Thread.Sleep(800); // a short delay to avoid issues with sensor called too often
+
+            try
             {
-                _log.LogWarning("Received bad result from Sensor");
+                var data = _nodeServices.InvokeAsync<DhtData>("./DhtReader/readDhtData", 4).GetAwaiter().GetResult();
                 
+                Console.WriteLine($"{data.Temperature}|--|{data.Humidity}");
+
+                return data;
+            }
+            catch (Exception ex)
+            {
+                _log.LogError(ex, "Unable to read data from node-dht");
                 return null;
             }
-            
-            var data = new DhtData(
-                Dht11Wrapper.get_temp(),
-                Dht11Wrapper.get_humidity()
-            );
-
-            if (Math.Abs(data.Humidity - 20f) < 0.05f && (Math.Abs(data.Temperature - 22f) < 0.05f || Math.Abs(data.Temperature - 21f) < 0.05f) && attempt < 10)
-            {
-                Console.WriteLine($"!! Received {data.Temperature} and {data.Humidity}, Skipping...");
-                
-                return ReadSingleResult(attempt + 1);
-            }
-            
-            Console.WriteLine($"{data.Temperature}|--|{data.Humidity}");
-
-            return data;
         }
     }
 }
