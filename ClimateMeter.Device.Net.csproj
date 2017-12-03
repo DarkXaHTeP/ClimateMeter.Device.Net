@@ -11,4 +11,9 @@
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.0.0" />
     <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="3.17.2" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include=".\DhtReader\readDhtData.js" CopyToOutputDirectory="Always" />
+    <None Include=".\package.json" CopyToOutputDirectory="Always" />
+    <None Include=".\package-lock.json" CopyToOutputDirectory="Always" />
+  </ItemGroup>
 </Project>

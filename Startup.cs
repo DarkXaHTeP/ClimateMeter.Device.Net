@@ -19,7 +19,7 @@ namespace ClimateMeter.Device.Net
         
         public void Configure(IApplicationBuilder app, Device device, INodeServices nodeServices)
         {
-            var result = nodeServices.InvokeAsync<DhtData>("./readDhtData", 4).GetAwaiter().GetResult();
+            var result = nodeServices.InvokeAsync<DhtData>("./DhtReader/readDhtData", 4).GetAwaiter().GetResult();
             Console.WriteLine($"Received from js: hum = {result.Humidity}, temp = {result.Temperature}");
             
             app.OnExecute(() => device.Run());
