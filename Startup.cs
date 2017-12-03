@@ -2,6 +2,7 @@
 using ClimateMeter.Device.Net.Authentication;
 using ClimateMeter.Device.Net.DhtReader;
 using DarkXaHTeP.CommandLine;
+using Microsoft.AspNetCore.NodeServices;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,13 +17,18 @@ namespace ClimateMeter.Device.Net
             _configuration = configuration;
         }
         
-        public void Configure(IApplicationBuilder app, Device device)
+        public void Configure(IApplicationBuilder app, Device device, INodeServices nodeServices)
         {
+            var result = nodeServices.InvokeAsync<DhtData>("./readDhtData", 4).GetAwaiter().GetResult();
+            Console.WriteLine($"Received from js: hum = {result.Humidity}, temp = {result.Temperature}");
+            
             app.OnExecute(() => device.Run());
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddNodeServices();
+            
             // TODO Replace with ICommandLineEnvironment after issue is fixed
             if (Environment.GetEnvironmentVariable("COMMANDLINE_ENVIRONMENT") == "Development")
             {

@@ -4,8 +4,8 @@ function readData(callback, pinNumber, retryNumber) {
     sensor.read(11, 4, function(err, temp, hum) {
         if (!err) {
              callback({
-                 temperature: temp.toFixed(1),
-                 humidity: hum.toFixed(1)
+                 Temperature: temp.toFixed(1),
+                 Humidity: hum.toFixed(1)
              });
         } else {
             if (retryNumber < 5) {
