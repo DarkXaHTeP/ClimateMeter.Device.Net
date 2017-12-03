@@ -1,9 +1,9 @@
-FROM microsoft/dotnet:2.0-sdk AS build-env
-WORKDIR /app
+#FROM microsoft/dotnet:2.0-sdk AS build-env
+#WORKDIR /app
 
-COPY . ./
-RUN dotnet restore
-RUN dotnet publish -c Release -r linux-arm -o out
+#COPY . ./
+#RUN dotnet restore
+#RUN dotnet publish -c Release -r linux-arm -o out
 
 FROM microsoft/dotnet:2.0-runtime-deps-stretch-arm32v7
 WORKDIR /app
@@ -16,6 +16,6 @@ RUN mkdir bcm2835 && cd bcm2835 \
     && ./configure && make && make install
 
 RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash && source ~/.bashrc && nvm install v8.9.1 && npm install
-COPY --from=build-env /app/out ./
-
-ENTRYPOINT ["./ClimateMeter.Device.Net"]
+#COPY --from=build-env /app/out ./
+COPY ./DhtReader/readDhtData.js .
+#ENTRYPOINT ["./ClimateMeter.Device.Net"]
