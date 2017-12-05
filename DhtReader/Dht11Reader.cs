@@ -27,35 +27,35 @@ namespace ClimateMeter.Device.Net.DhtReader
         public bool TryReadDhtData(out DhtData data)
         {
             List<DhtData> results = Enumerable
-                .Range(0, 17)
-                .Select(_ => ReadSingleResult(0))
+                .Range(0, 11)
+                .Select(_ => ReadSingleResult())
                 .Where(res => res.HasValue)
                 .Select(res => res.Value)
                 .ToList();
 
             if (!results.Any())
             {
-                data = new DhtData(float.MinValue, float.MinValue);
+                data = new DhtData(Decimal.MinValue, Decimal.MinValue);
                 
                 return false;
             }
 
-            IEnumerable<float> temperatures = results
+            IEnumerable<decimal> temperatures = results
                 .Select(res => res.Temperature);
 
-            float temperature = ProcessSensorReading(temperatures);
+            decimal temperature = ProcessSensorReading(temperatures);
 
-            IEnumerable<float> humidities = results
+            IEnumerable<decimal> humidities = results
                 .Select(res => res.Humidity);
 
-            float humidity = ProcessSensorReading(humidities);
+            decimal humidity = ProcessSensorReading(humidities);
 
             data = new DhtData(temperature, humidity);
             
             return true;
         }
 
-        private float ProcessSensorReading(IEnumerable<float> results)
+        private decimal ProcessSensorReading(IEnumerable<decimal> results)
         {
             var valueGroups = results
                 .GroupBy(res => res)
@@ -73,10 +73,10 @@ namespace ClimateMeter.Device.Net.DhtReader
                 .Select(gr => gr.Key * gr.Count())
                 .Sum();
             
-            return (float) Math.Round(total / count * 10) / 10f;
+            return Math.Round(total / count * 10) / 10m;
         }
 
-        private DhtData? ReadSingleResult(uint attempt)
+        private DhtData? ReadSingleResult()
         {
             Thread.Sleep(800); // a short delay to avoid issues with sensor called too often
 

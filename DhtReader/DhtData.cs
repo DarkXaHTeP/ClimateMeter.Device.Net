@@ -2,12 +2,13 @@
 {
     public struct DhtData
     {
-        public DhtData(float temperature, float humidity)
+        public DhtData(decimal temperature, decimal humidity)
         {
             Temperature = temperature;
             Humidity = humidity;
         }
-        public float Temperature { get; set; }
-        public float Humidity { get; set; }
+        
+        public decimal Temperature { get; set; }
+        public decimal Humidity { get; set; }
     }
 }

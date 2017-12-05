@@ -18,7 +18,7 @@ namespace ClimateMeter.Device.Net
             return Task.FromResult(Guid.Empty);
         }
 
-        public Task AddSensorReading(Guid deviceId, float temperature, float humidity)
+        public Task AddSensorReading(Guid deviceId, decimal temperature, decimal humidity)
         {
             return Task.CompletedTask;
         }
