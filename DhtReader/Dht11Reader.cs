@@ -82,9 +82,7 @@ namespace ClimateMeter.Device.Net.DhtReader
 
             try
             {
-                var data = _nodeServices.InvokeAsync<DhtData>("./DhtReader/readDhtData", 4).GetAwaiter().GetResult();
-                
-                Console.WriteLine($"{data.Temperature}|--|{data.Humidity}");
+                var data = _nodeServices.InvokeAsync<DhtData>("./DhtReader/readDhtData", _pin).GetAwaiter().GetResult();
 
                 return data;
             }
