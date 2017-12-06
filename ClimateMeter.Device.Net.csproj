@@ -4,7 +4,7 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="DarkXaHTeP.CommandLine" Version="1.0.0" />
+    <PackageReference Include="DarkXaHTeP.CommandLine" Version="1.0.1" />
     <PackageReference Include="DarkXaHTeP.Extensions.Configuration.Consul" Version="1.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.NodeServices" Version="2.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="1.0.0-alpha2-final" />
