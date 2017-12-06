@@ -1,9 +1,7 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using ClimateMeter.Device.Net.Authentication;
 using ClimateMeter.Device.Net.DhtReader;
 using DarkXaHTeP.CommandLine;
-using Microsoft.AspNetCore.NodeServices;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,10 +10,12 @@ namespace ClimateMeter.Device.Net
     public class Startup
     {   
         private readonly IConfiguration _configuration;
+        private readonly ICommandLineEnvironment _environment;
 
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, ICommandLineEnvironment environment)
         {
             _configuration = configuration;
+            _environment = environment;
         }
         
         public void Configure(IApplicationBuilder app, Device device)
@@ -30,8 +30,7 @@ namespace ClimateMeter.Device.Net
                 options.ProjectPath = Directory.GetCurrentDirectory();
             });
             
-            // TODO Replace with ICommandLineEnvironment after issue is fixed
-            if (Environment.GetEnvironmentVariable("COMMANDLINE_ENVIRONMENT") == "Development")
+            if (_environment.IsDevelopment())
             {
                 services.AddSingleton<IDhtReader, FakeDhtReader>();
             }
