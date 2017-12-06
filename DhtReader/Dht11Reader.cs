@@ -27,7 +27,7 @@ namespace ClimateMeter.Device.Net.DhtReader
         public bool TryReadDhtData(out DhtData data)
         {
             List<DhtData> results = Enumerable
-                .Range(0, 11)
+                .Range(0, 25)
                 .Select(_ => ReadSingleResult())
                 .Where(res => res.HasValue)
                 .Select(res => res.Value)
@@ -78,7 +78,7 @@ namespace ClimateMeter.Device.Net.DhtReader
 
         private DhtData? ReadSingleResult()
         {
-            Thread.Sleep(800); // a short delay to avoid issues with sensor called too often
+            Thread.Sleep(1000); // a short delay to avoid issues with sensor called too often
 
             try
             {
