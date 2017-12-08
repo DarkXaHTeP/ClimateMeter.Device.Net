@@ -5,19 +5,19 @@ COPY . ./
 RUN dotnet restore
 RUN dotnet publish -c Release -r linux-arm -o out
 
+FROM darkxahtep/node-bcm2835:latest-arm32v7 AS node-env
+WORKDIR /app
+COPY ./package.json ./package-lock.json ./
+RUN npm install
+
 FROM microsoft/dotnet:2.0-runtime-deps-stretch-arm32v7
 WORKDIR /app
 COPY tmp/qemu-arm-static /usr/bin/qemu-arm-static
 
-RUN apt-get -qq update && apt-get install -qq -y curl ca-certificates build-essential
-RUN mkdir bcm2835 && cd bcm2835 \
-    && curl http://www.airspayce.com/mikem/bcm2835/bcm2835-1.52.tar.gz -o bcm2835.tar.gz \
-    && tar zxvf bcm2835.tar.gz -C ./ --strip-components=1 \
-    && ./configure && make && make install
-
+RUN apt-get -qq update && apt-get install -qq -y curl
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash
 RUN apt-get install -qq -y nodejs
 
 COPY --from=build-env /app/out ./
-RUN npm install
+COPY --from=node-env /app/node_modules ./node_modules/
 ENTRYPOINT ["./ClimateMeter.Device.Net"]
