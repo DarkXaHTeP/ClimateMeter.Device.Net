@@ -14,7 +14,7 @@ FROM microsoft/dotnet:2.0-runtime-deps-stretch-arm32v7
 WORKDIR /app
 COPY tmp/qemu-arm-static /usr/bin/qemu-arm-static
 
-RUN apt-get -qq update && apt-get install -qq -y curl
+RUN apt-get -qq update && apt-get install -qq -y curl gnupg
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash
 RUN apt-get install -qq -y nodejs
 
